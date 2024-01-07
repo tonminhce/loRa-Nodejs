@@ -1,8 +1,6 @@
 const ttn = require("ttn");
 const mysql = require("mysql2");
 const config = require("./config.js");
-// const con = mysql.createConnection(config.databaseOptions);
-
 const appEUI = require("./config.js").TTNOptions.appEUI;
 const accessKey = require("./config.js").TTNOptions.accessKey;
 
@@ -48,20 +46,6 @@ client.on("_uplinkDevice680_", function (msg) {
     isValid: isValid,
   };
   console.log("Data1: ", data);
-  //   con.query(
-  //     "INSERT INTO sensor_readings (sensor_id, batv,illum,temp,isvalid) VALUES (?, ?,?, ? ,?)",
-  //     [
-  //       data.deviceId,
-  //       data.decodedPayloadBatV,
-  //       data.decodedPayloadIllum,
-  //       data.decodedPayloadTemp,
-  //       isValid,
-  //     ],
-  //     function (err, result) {
-  //       if (err) throw err;
-  //       console.log("Data inserted into sensor_readings table");
-  //     }
-  //   );
 });
 
 client.on("_uplinkDevice938_", function (msg) {
@@ -91,14 +75,6 @@ client.on("_uplinkDevice938_", function (msg) {
     isValid: isValid,
   };
   console.log("Data2: ", data);
-  //   con.query(
-  //     "INSERT INTO sensor_readings (sensor_id, batv, temp, ec, ) VALUES (?, ?, ...)",
-  //     [data.deviceId, data.decodedPayloadBatV /* ... */],
-  //     function (err, result) {
-  //       if (err) throw err;
-  //       console.log("Data inserted into sensor_readings table");
-  //     }
-  //   );
 });
 
 client.on("_uplinkDevice931_", function (msg) {
@@ -128,18 +104,9 @@ client.on("_uplinkDevice931_", function (msg) {
     isValid: isValid,
   };
   console.log("Data3: ", data);
-  //   con.query(
-  //     "INSERT INTO sensor_readings (sensor_id, batv, ...) VALUES (?, ?, ...)",
-  //     [data.deviceId, data.decodedPayloadBatV /* ... */],
-  //     function (err, result) {
-  //       if (err) throw err;
-  //       console.log("Data inserted into sensor_readings table");
-  //     }
-  //   );
 });
 
 client.on("uplink", function (msg) {
-  // respond to every third message
   if (msg.counter % 3 === 0) {
     console.log("[DEBUG]", "Downlink");
 

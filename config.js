@@ -1,15 +1,16 @@
+require('dotenv').config();
+
 const databaseOptions = {
-  host: "0.tcp.ap.ngrok.io",
-  port: "18954",
-  user: "hello123",
-  password: "hello123",
-  database: "hello123",
+  host: process.env.PGHOST || "localhost",
+  port: process.env.PGPORT || "5432",
+  user: process.env.PGUSER || "hello123",
+  password: process.env.PGPASSWORD || "hello123",
+  database: process.env.PGDATABASE || "hello123",
 };
 
 const TTNOptions = {
-  appEUI : "2053415@ttn",
-  accessKey :
-  "NNSXS.IZRLR2Q7CTF5B3C52HSRZYS3LKFCL65FBACOWPQ.K7CFTB6OP7MHKLM35EVJEXB7EI2QNR372OGIZZ2FU3HC7HMHYETA",
+  appEUI: process.env.TTN_APP_EUI,
+  accessKey: process.env.TTN_ACCESS_KEY,
 };
 
-module.exports = { databaseOptions: databaseOptions, TTNOptions: TTNOptions };
+module.exports = { databaseOptions, TTNOptions };
