@@ -1,0 +1,16 @@
+version: '4.1'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: hello123
+      POSTGRES_PASSWORD: hello123
+      POSTGRES_DB: hello123
+    ports:
+      - "5432:5432"
+    volumes:
+      - my_dbdata:/var/lib/postgresql/data
+      
+volumes:
+  my_dbdata:

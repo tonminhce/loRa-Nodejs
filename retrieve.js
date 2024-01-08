@@ -1,5 +1,4 @@
 const ttn = require("ttn");
-const mysql = require("mysql2");
 const config = require("./config.js");
 const appEUI = require("./config.js").TTNOptions.appEUI;
 const accessKey = require("./config.js").TTNOptions.accessKey;
@@ -108,7 +107,7 @@ client.on("_uplinkDevice931_", function (msg) {
 
 client.on("uplink", function (msg) {
   if (msg.counter % 3 === 0) {
-    console.log("[DEBUG]", "Downlink");
+    // console.log("[DEBUG]", "Downlink");
 
     var payload = new Buffer("4869", "hex");
     client.downlink(msg.devEUI, payload);
