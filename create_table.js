@@ -109,11 +109,11 @@ const createTables = async () => {
 };
 const insertSensors = async () => {
   const insertQuery = `
-    INSERT INTO sensors (name, device_id, is_valid) VALUES
-    ('Temperature Light Sensor', 'eui-a84041ced1839680', true),
-    ('Temperature Humidity Sensor', 'eui-a840413271843931', true),
-    ('Temperature Humidity EC Sensor', 'eui-a84041b491843938', true)
-    ON CONFLICT (device_id) DO UPDATE SET name = EXCLUDED.name, is_valid = EXCLUDED.is_valid
+    INSERT INTO sensors (name, device_id ) VALUES
+    ('Temperature Light Sensor', 'eui-a84041ced1839680'),
+    ('Temperature Humidity Sensor', 'eui-a840413271843931'),
+    ('Temperature Humidity EC Sensor', 'eui-a84041b491843938')
+    ON CONFLICT (device_id) DO UPDATE SET name = EXCLUDED.name
     RETURNING id;
   `;
 
@@ -167,17 +167,17 @@ const insertUser = async () => {
 
     // Insert the user with the hashed password and the admin role
     const insertUserQuery = `
-      WITH admin_role AS (
-        SELECT id FROM roles WHERE name = 'admin'
-      )
       INSERT INTO users (email, name, password, role_id)
-      SELECT 'minh@gmail.com', 'Minh Dep Trai', '${hashedPassword}', id FROM admin_role
-      ON CONFLICT (email) DO NOTHING;
+      SELECT 'minh@gmail.com', 'Minh Dep Trai', '${hashedPassword}', 1
+      WHERE NOT EXISTS (
+        SELECT 1 FROM users WHERE email = 'minh@gmail.com'
+      );
     `;
 
     const result = await pool.query(insertUserQuery);
     if (result.rowCount > 0) {
       console.log("User Minh Dep Trai inserted");
+      console.log(hashedPassword);
     } else {
       console.log("User Minh Dep Trai already exists or could not be inserted");
     }
