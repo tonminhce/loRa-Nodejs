@@ -28,7 +28,7 @@ exports.signIn = async (req, res) => {
     if (match) {
       // Create a JWT token
       const token = jwt.sign(
-        { userId: user.id, email: user.email }, // Payload could include any user information that you wish to include in the token.
+        { name: user.name, email: user.email }, // Payload could include any user information that you wish to include in the token.
         secretKey,
         { expiresIn: "24h" } // Token will expire in 24 hour. You can set any time you see appropriate.
       );
