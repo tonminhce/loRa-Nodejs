@@ -44,6 +44,7 @@ const createTables = async () => {
     email VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255),
     password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     role_id INT NOT NULL DEFAULT 1 REFERENCES roles(id)
   );
   `,
