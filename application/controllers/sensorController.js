@@ -35,7 +35,7 @@ exports.getSensorData = async (req, res) => {
 };
 
 // Controller to get the latest sensor data for all sensors
-exports.getAllData = async (req, res) => {
+exports.getAllSensors = async (req, res) => {
   try {
     // Query to fetch the latest data for each sensor data type
     const allDataQueries = [

@@ -1,5 +1,4 @@
 const express = require("express");
-const pool = require("./config.js").pool;
 
 require("./retrieve");
 
