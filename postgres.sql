@@ -61,10 +61,24 @@ INSERT INTO roles (name, permissions) VALUES
     ON CONFLICT (name) DO NOTHING;
 
 -- Insert sensors and get their ids
-
 INSERT INTO sensors (name, device_id, is_valid) VALUES
     ('Temperature Light Sensor', 'eui-a84041ced1839680', true),
     ('Temperature Humidity Sensor', 'eui-a840413271843931', true),
     ('Temperature Humidity EC Sensor', 'eui-a84041b491843938', true)
     ON CONFLICT (device_id) DO UPDATE SET name = EXCLUDED.name, is_valid = EXCLUDED.is_valid
     RETURNING id;
+
+-- Create chatrooms table
+CREATE TABLE IF NOT EXISTS chatrooms (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Create messages table
+CREATE TABLE IF NOT EXISTS messages (
+  id SERIAL PRIMARY KEY,
+  chatroom_id INT NOT NULL REFERENCES chatrooms(id),
+  sender_id INT NOT NULL REFERENCES users(id),
+  message_text TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

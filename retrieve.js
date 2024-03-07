@@ -231,7 +231,13 @@ client.on("uplink", function (msg) {
 io.on('connection', (socket) => {
   console.log('[INFO] A client connected');
 
-  // You can also listen for events from your frontend if needed
+  // Handle new message
+  socket.on('chat message', (msg) => {
+    // Broadcast the message to all connected clients
+    io.emit('chat message', msg);
+  });
+
+  // Handle disconnect
   socket.on('disconnect', () => {
     console.log('[INFO] A client disconnected');
   });

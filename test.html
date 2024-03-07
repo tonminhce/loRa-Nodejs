@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat and Authentication Test</title>
+</head>
+<body>
+  <h1>Chat and Authentication Test</h1>
+  
+  <h2>Sign In</h2>
+  <form id="signInForm">
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br>
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br>
+    <button type="submit">Sign In</button>
+  </form>
+
+  <h2>Sign Up</h2>
+    <form id="signUpForm">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name" required><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br>
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br>
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <h2>Chat</h2>
+  <div id="chatMessages"></div>
+  <form id="chatForm">
+    <input type="text" id="chatInput" placeholder="Type your message...">
+    <button type="submit">Send</button>
+  </form>
+
+  <div id="response"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+  <script>
+        // Function to send a POST request to the server
+    async function postData(url = '', data = {}) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    }
+
+    // Sign In form submission handler
+    document.getElementById('signInForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const signInData = {
+        email: formData.get('email'),
+        password: formData.get('password')
+      };
+      try {
+        const response = await postData('/api/signin', signInData);
+        document.getElementById('response').innerHTML = JSON.stringify(response, null, 2);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+
+    // Sign Up form submission handler
+    document.getElementById('signUpForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const signUpData = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        password: formData.get('password')
+      };
+      try {
+        const response = await postData('/api/signup', signUpData);
+        document.getElementById('response').innerHTML = JSON.stringify(response, null, 2);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+    // Connect to Socket.IO server
+    const socket = io('http://localhost:3001');
+
+    // Chat form submission handler
+    document.getElementById('chatForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const messageInput = document.getElementById('chatInput');
+      const message = messageInput.value.trim();
+      if (message) {
+        sendMessage(message);
+        messageInput.value = '';
+      }
+    });
+
+    // Receive message
+    socket.on('chat message', (msg) => {
+      const chatMessages = document.getElementById('chatMessages');
+      const messageElement = document.createElement('div');
+      messageElement.textContent = msg;
+      chatMessages.appendChild(messageElement);
+    });
+
+    // Function to send a message
+    function sendMessage(message) {
+      socket.emit('chat message', message);
+    }
+  </script>
+</body>
+</html>
