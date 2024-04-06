@@ -39,15 +39,17 @@ const createTables = async () => {
   // Create users table
   await createTable(
     `
-  CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255),
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    role_id INT NOT NULL DEFAULT 1 REFERENCES roles(id)
-  );
-  `,
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(255),
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  role_id INT NOT NULL DEFAULT 1 REFERENCES roles(id),
+  current_stage_id INT NOT NULL REFERENCES plant_stages(id)
+);
+`,
+// first name, last name, picture
     "users"
   );
 
@@ -168,8 +170,8 @@ const insertUser = async () => {
 
     // Insert the user with the hashed password and the admin role
     const insertUserQuery = `
-      INSERT INTO users (email, name, password, role_id)
-      SELECT 'minh@gmail.com', 'Minh Dep Trai', '${hashedPassword}', 1
+      INSERT INTO users (email, name, password, role_id, current_stage_id)
+      SELECT 'minh@gmail.com', 'Minh Dep Trai', '${hashedPassword}', 1, 1
       WHERE NOT EXISTS (
         SELECT 1 FROM users WHERE email = 'minh@gmail.com'
       );
@@ -187,12 +189,46 @@ const insertUser = async () => {
   }
 };
 
+const insertPlantStages = async () => {
+  try {
+    const result = await pool.query(`
+      INSERT INTO plant_stages (stage_name) VALUES
+    ('seeding_stage'),
+    ('young_tree_stage'),
+    ('first_flowering_stage'),
+    ('fruit_bearing_stage'),
+    ('fruit_ripening_stage')
+      ON CONFLICT (stage_name) DO NOTHING;
+    `);
+    console.log("Plant stages inserted");
+  } catch (err) {
+    console.error("Error inserting plant stages", err);
+  }
+};
+const createPlantStagesTable = async () => {
+  try {
+    const result = await pool.query(`
+      CREATE TABLE IF NOT EXISTS plant_stages (
+        id SERIAL PRIMARY KEY,
+        stage_name VARCHAR(50) NOT NULL UNIQUE
+      );
+    `);
+    console.log("Plant stages table created");
+  } catch (err) {
+    console.error("Error creating plant stages table", err);
+  }
+};
+
 // Initialize all tables and insert sensors
 const initializeDatabase = async () => {
   try {
+    await createPlantStagesTable();
+
     await createTables();
     await insertSensors();
     await insertUser();
+    await insertPlantStages();
+
     console.log("All tables created and sensors inserted");
   } catch (err) {
     console.error("An error occurred during database initialization", err);

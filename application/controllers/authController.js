@@ -110,4 +110,77 @@ exports.signUp = async (req, res) => {
       error: err.message,
     });
   }
+  exports.getCurrentStage = async (req, res) => {
+    const userId = req.user.id; // Assuming you have user information stored in the req.user object
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized: User not authenticated.",
+      });
+    }
+
+    try {
+      const query = "SELECT current_stage_id FROM users WHERE id = $1";
+      const { rows } = await pool.query(query, [userId]);
+
+      if (rows.length === 0) {
+        return res.status(404).json({
+          message: "User not found.",
+        });
+      }
+
+      const currentStageId = rows[0].current_stage_id;
+
+      res.status(200).json({
+        currentStageId,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: "An error occurred while retrieving the current stage.",
+        error: err.message,
+      });
+    }
+  };
+  exports.updateCurrentStage = async (req, res) => {
+    const userId = req.user.id; // Assuming you have user information stored in the req.user object
+    const { newStageId } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized: User not authenticated.",
+      });
+    }
+
+    if (!newStageId) {
+      return res.status(400).json({
+        message: "New stage ID is required for updating the current stage.",
+      });
+    }
+
+    try {
+      // Check if the newStageId exists in the plant_stages table
+      const stageQuery = "SELECT id FROM plant_stages WHERE id = $1";
+      const stageResult = await pool.query(stageQuery, [newStageId]);
+
+      if (stageResult.rows.length === 0) {
+        return res.status(404).json({
+          message: "Stage not found.",
+        });
+      }
+
+      // Update the current_stage_id for the user
+      const updateQuery =
+        "UPDATE users SET current_stage_id = $1 WHERE id = $2";
+      await pool.query(updateQuery, [newStageId, userId]);
+
+      res.status(200).json({
+        message: "Current stage updated successfully.",
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: "An error occurred while updating the current stage.",
+        error: err.message,
+      });
+    }
+  };
 };
