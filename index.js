@@ -1,9 +1,6 @@
 const OpenAI = require("openai");
 const readline = require("readline");
 
-// const openai = new OpenAI({
-//   // apiKey: "",
-// });
 
 const rl = readline.createInterface({
   input: process.stdin,
