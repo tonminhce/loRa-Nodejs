@@ -2,7 +2,7 @@ const OpenAI = require("openai");
 const readline = require("readline");
 
 const openai = new OpenAI({
-  apiKey: "",
+  // apiKey: "",
 });
 
 const rl = readline.createInterface({
