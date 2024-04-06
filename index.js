@@ -2,7 +2,7 @@ const OpenAI = require("openai");
 const readline = require("readline");
 
 const openai = new OpenAI({
-  apiKey: "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",
+  apiKey: "",
 });
 
 const rl = readline.createInterface({
